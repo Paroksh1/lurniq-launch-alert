@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
@@ -8,9 +8,24 @@ interface EmailSignupFormProps {
   variant?: "default" | "compact";
 }
 
+interface StoredEmail {
+  email: string;
+  timestamp: string;
+}
+
 const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Store all emails
+  const [allEmails, setAllEmails] = useState<StoredEmail[]>([]);
+  
+  // Load stored emails on component mount
+  useEffect(() => {
+    const storedEmails = localStorage.getItem('subscribedEmails');
+    if (storedEmails) {
+      setAllEmails(JSON.parse(storedEmails));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +37,7 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }
     setIsSubmitting(true);
     
     try {
+      // Send to Formspree as before
       const response = await fetch("https://formspree.io/f/xrgwdwkb", {
         method: "POST",
         headers: {
@@ -31,7 +47,18 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }
       });
 
       if (response.ok) {
+        // Store the email locally
+        const newEmail: StoredEmail = {
+          email: email,
+          timestamp: new Date().toISOString()
+        };
+        
+        const updatedEmails = [...allEmails, newEmail];
+        setAllEmails(updatedEmails);
+        localStorage.setItem('subscribedEmails', JSON.stringify(updatedEmails));
+        
         toast.success("Thanks for signing up! We'll be in touch soon.");
+        console.log("Current email list:", updatedEmails);
         setEmail("");
       } else {
         toast.error("Something went wrong. Please try again.");
@@ -41,6 +68,25 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // New function to export emails
+  const exportEmails = () => {
+    if (allEmails.length === 0) {
+      toast.error("No emails to export yet");
+      return;
+    }
+    
+    const emailsText = allEmails.map(item => `${item.email},${item.timestamp}`).join('\n');
+    const blob = new Blob([emailsText], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'subscribed-emails.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Exported ${allEmails.length} email addresses`);
   };
 
   return (
@@ -63,6 +109,18 @@ const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }
         }`}>
         {isSubmitting ? "Please wait..." : "🚀 Notify Me"}
       </Button>
+      
+      {/* Add hidden export button for admin use - only visible in development */}
+      {import.meta.env.DEV && (
+        <Button 
+          type="button"
+          variant="outline"
+          onClick={exportEmails}
+          className="mt-2 text-xs opacity-50 hover:opacity-100"
+        >
+          Export Emails (Admin)
+        </Button>
+      )}
     </form>
   );
 };
