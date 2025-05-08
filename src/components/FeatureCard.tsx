@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Brain, Target, Book, FlaskConical } from "lucide-react";
+import { Brain, Target, BookOpen, FileText } from "lucide-react";
 
 type FeatureCardProps = {
   icon: string;
@@ -15,11 +15,11 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
       case "🎯":
         return <Target className="w-8 h-8 text-secondary" />;
       case "📘":
-        return <Book className="w-8 h-8 text-secondary" />;
+        return <BookOpen className="w-8 h-8 text-secondary" />;
       case "🧠":
         return <Brain className="w-8 h-8 text-secondary" />;
       case "💬":
-        return <FlaskConical className="w-8 h-8 text-secondary" />;
+        return <FileText className="w-8 h-8 text-secondary" />;
       default:
         return <div className="text-3xl">{icon}</div>;
     }

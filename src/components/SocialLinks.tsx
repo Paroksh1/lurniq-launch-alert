@@ -23,7 +23,7 @@ const SocialLinks: React.FC = () => {
       hoverClass: "hover:text-indigo-500",
     },
     {
-      name: "WhatsApp",
+      name: "Blog",
       icon: <Book className="h-5 w-5" />,
       href: "#",
       hoverClass: "hover:text-green-500",
