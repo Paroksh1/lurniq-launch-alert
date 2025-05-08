@@ -14,17 +14,17 @@ const Index: React.FC = () => {
   const launchDate = new Date();
   launchDate.setDate(launchDate.getDate() + 15);
 
-  // Features list
+  // Features list with updated descriptions
   const features = [
     {
       icon: "🎯",
       title: "Smart Roadmaps",
-      description: "Personalized learning paths based on your goals and progress."
+      description: "No more guesswork. Get personalized learning plans that adjust daily based on your progress and goals."
     },
     {
       icon: "📘",
-      title: "Career & Exam Modes",
-      description: "Specialized preparation for job interviews or certification exams."
+      title: "Exam & Career Modes",
+      description: "Choose how you learn – whether you're prepping for an exam or building long-term skills. Lurniq adapts to your goals, timeline, and syllabus."
     },
     {
       icon: "🧠",
