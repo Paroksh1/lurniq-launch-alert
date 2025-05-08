@@ -4,7 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 
-const EmailSignupForm: React.FC = () => {
+interface EmailSignupFormProps {
+  variant?: "default" | "compact";
+}
+
+const EmailSignupForm: React.FC<EmailSignupFormProps> = ({ variant = "default" }) => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -40,21 +44,23 @@ const EmailSignupForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row gap-2 max-w-md mx-auto ${variant === "compact" ? "scale-90 -m-2" : ""}`}>
       <div className="flex-1">
         <Input
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="h-12 shadow-sm"
+          className={`h-12 shadow-sm ${variant === "compact" ? "text-sm" : ""}`}
           disabled={isSubmitting}
         />
       </div>
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium animate-pulse-soft hover:shadow-lg transition-shadow">
+        className={`h-12 px-6 bg-primary hover:bg-primary/90 text-white font-medium animate-pulse-soft hover:shadow-lg transition-shadow ${
+          variant === "compact" ? "text-sm px-4" : ""
+        }`}>
         {isSubmitting ? "Please wait..." : "🚀 Notify Me"}
       </Button>
     </form>
